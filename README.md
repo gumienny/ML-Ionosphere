@@ -1,7 +1,14 @@
 # Projekt z przedmiotu "Sztuczna inteligencja"
-Temat: Zrealizować sieć neuronową uczoną algorytmem wstecznej propagacji błędu z przyspieszeniem metodą adaptacyjnego współczynnika uczenia (trainbpa) uczącą się klasyfikowania jonosfery. [Link do zbioru danych wraz z opisem](http://archive.ics.uci.edu/ml/datasets/Ionophere)
+Temat: Zrealizować sieć neuronową uczoną algorytmem wstecznej propagacji błędu z przyspieszeniem metodą adaptacyjnego współczynnika uczenia (trainbpa) uczącą się klasyfikowania jonosfery. [Link do zbioru danych wraz z opisem](http://archive.ics.uci.edu/ml/datasets/Ionosphere)
 
-## 1. Opis problemu
+## Spis treści
+1. [Opis problemu](#opis_problemu)
+2. [Opis sieci neuronowej](#opis_sieci_neuronowej)
+3. [Skrypt](#skrypt)
+4. [Eksperymenty](#eksperymenty)
+5. [Wnioski](#wnioski)
+
+## 1. Opis problemu <a name="opis_problemu"></a>
 Sieci neuronowe mają wiele potencjalnych zastosowań w przetwarzaniu sygnałów.
 
 Opisuję tutaj zastosowanie sieci neuronowych do problemu klasyfikacji, który normalnie wymagałby interwencji człowieka. Sieci zostały przeszkolone w zakresie rozróżniania "dobrych" od "złych" danych zwrotnych radaru z jonosfery.
@@ -14,23 +21,19 @@ Radar działa poprzez transmisję wzoru wielowymiarowego do jonosfery. Odbiornik
 
 Sieć, którą wykorzystałem, jest znana jako sieć typu feedforward, które zawierają warstwę wejściową z identycznymi neuronami, warstwą pośrednią lub ukrytą oraz warstwą wyjściową. Wszystkie jednostki są dowolną warstwą połączoną ze wszystkimi jednostkami w powyższej warstwie. Nie ma innych połączeń. Jednostki wejściowe nie wykonują obliczeń, ale służą jedynie do podziału danych wejściowych. Jednostki w ukrytej warstwie nie mają bezpośrednich połączeń ze światem zewnętrznym, ale po przetworzeniu danych wejściowych przekazują swoje wyniki do jednostek warstwy wyjściowej. W procesie zwanym treningiem, sieć otrzymuje wybrane przykłady wejściowe i odpowiednią pożądaną odpowiedź wyjściową (lub cel). Wagi połączeń są zmieniane, przy użyciu algorytmu uczenia się zwanego propagacją wsteczną, aż błąd wyjściowy jest zminimalizowany w sensie najmniejszych kwadratów.
 
-Ten zestaw, który nie ma danych wspólnych z zestawem treningowym, nazywany jest zestawem testowym.
-
 Ponieważ każdy dyskretny zwrot radaru składa się z części rzeczywistej i urojonej, wynik wynosi 34 wartości na ACF. Te 34 wartości służą jako dane wejściowe do sieci. Każde wejście znormalizowano do zakresu [-1, 1]. Liczba ukrytych węzłów była zmieniana od 0 (bez ukrytej warstwy) do 15. Ponieważ sieć jest obecnie używana do klasyfikowania danych wejściowych tylko w dwóch klasach (dobra i zła), potrzebny był tylko jeden węzeł wyjściowy. Ten węzeł wyprowadza 1 dla dobrego powrotu, a 0 dla złego powrotu. Ogólnie dobre wyniki są wskazywane przez dobrze zdefiniowane sygnały, które świadczą o obecności pewnego rodzaju struktury w jonosferze. Złe zwroty mogą być spowodowane
 - z powodu braku identyfikowalnej struktury (sygnał przechodzi przez jonosferę),
 - przez niespójne rozproszenie (sygnały są odbijane od zbyt wielu struktur, co powoduje anulowanie fazy),
 - przez absorpcję impulsów radarowych.
 
-Złe zwroty są bardziej zróżnicowane niż dobre. Ta różnica znajduje odzwierciedlenie w zachowaniu sieci.
+## 2. Opis sieci neuronowej <a name="opis_sieci_neuronowej"></a>
 
-## 2. Opis sieci neuronowej
+## 3. Skrypt <a name="skrypt"></a>
 
-## 3. Skrypt
+## 4. Eksperymenty <a name="eksperymenty"></a>
 
-## 4. Eksperymenty
-
-## 5. Wnioski
+## 5. Wnioski <a name="wnioski"></a>
 
 ## Bibliografia
-- Sigillito, V. G., Wing, S. P., Hutton, L. V., \& Baker, K. B. (1989). Classification of radar returns from the ionosphere using neural  networks. Johns Hopkins APL Technical Digest, 10, 262-266.
-- J. Żurada, M. Barski, W. Jędruch. Sztuczne sieci neuronowe. Podstawy teorii i zastosowania. Wydawnictwo Naukowe PWN, 1996, 83-01-12106-8
+- Sigillito, V. G., Wing, S. P., Hutton, L. V., \& Baker, K. B. (1989). **Classification of radar returns from the ionosphere using neural  networks**. Johns Hopkins APL Technical Digest, 10, 262-266.
+- J. Żurada, M. Barski, W. Jędruch. **Sztuczne sieci neuronowe**. **Podstawy teorii i zastosowania**. Wydawnictwo Naukowe PWN, 1996, 83-01-12106-8
