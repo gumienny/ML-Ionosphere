@@ -1,7 +1,7 @@
-# ML-Ionosphere
-Classification of radar returns from the ionosphere using neural networks.
+# Projekt z przedmiotu "Sztuczna inteligencja"
+Temat: Zrealizować sieć neuronową uczoną algorytmem wstecznej propagacji błędu z przyspieszeniem metodą adaptacyjnego współczynnika uczenia (trainbpa) uczącą się klasyfikowania jonosfery. [Link do zbioru danych wraz z opisem](http://archive.ics.uci.edu/ml/datasets/Ionophere)
 
-## Wstęp
+## 1. Opis problemu
 Sieci neuronowe mają wiele potencjalnych zastosowań w przetwarzaniu sygnałów.
 
 Opisuję tutaj zastosowanie sieci neuronowych do problemu klasyfikacji, który normalnie wymagałby interwencji człowieka. Sieci zostały przeszkolone w zakresie rozróżniania "dobrych" od "złych" danych zwrotnych radaru z jonosfery.
@@ -23,5 +23,14 @@ Ponieważ każdy dyskretny zwrot radaru składa się z części rzeczywistej i u
 
 Złe zwroty są bardziej zróżnicowane niż dobre. Ta różnica znajduje odzwierciedlenie w zachowaniu sieci.
 
+## 2. Opis sieci neuronowej
+
+## 3. Skrypt
+
+## 4. Eksperymenty
+
+## 5. Wnioski
+
 ## Bibliografia
 - Sigillito, V. G., Wing, S. P., Hutton, L. V., \& Baker, K. B. (1989). Classification of radar returns from the ionosphere using neural  networks. Johns Hopkins APL Technical Digest, 10, 262-266.
+- J. Żurada, M. Barski, W. Jędruch. Sztuczne sieci neuronowe. Podstawy teorii i zastosowania. Wydawnictwo Naukowe PWN, 1996, 83-01-12106-8
