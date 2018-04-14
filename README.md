@@ -11,7 +11,7 @@ Temat: Zrealizować sieć neuronową uczoną algorytmem wstecznej propagacji bł
 <a name="opis_problemu"></a>
 ## 1. Opis problemu
 
-Opisuję tutaj zastosowanie sieci neuronowych do problemu klasyfikacji, który normalnie wymagałby interwencji człowieka. Sieci zostały przeszkolone w zakresie rozróżniania "dobrych" od "złych" danych zwrotnych radaru z jonosfery.
+Opisuję tutaj zastosowanie sieci neuronowych do problemu klasyfikacji, który normalnie wymagałby interwencji człowieka. Klasyfikacja jest podkategorią **supervised learning**, której celem jest przewidzieć kategoryczne etykiety przypadków bazując na wcześniejszych obserwacjach. Etykiety mają charakter dyskretny i niejako pozwalają podzielić przypadki na grupy. Sieć została nauczona rozróżniania "dobrych" od "złych" danych zwrotnych radaru z jonosfery.
 
 Wykorzystane dane radarowe zostały zebrane przez Space Physics Group of The John Hopkins University Applied Physics Laboratory. System radarowy, znajdujący się w Goose Bay, w Labradorze, składa się z fazowanej macierzy 16 anten o wysokiej częstotliwości, o łącznej mocy transmitowanej rzędu 6,4 kW i zysku anteny około 30 dBm przy zakresach częstotliwości od 8 do 20 MHz. Dane zwracane przez radary są wykorzystywane do badania fizyki jonosfery w warstwach E i F (wysokość od 100 do 500 km).
 
@@ -25,6 +25,12 @@ Ponieważ każdy dyskretny zwrot radaru składa się z części rzeczywistej i u
 - brakiem identyfikowalnej struktury (sygnał przechodzi przez jonosferę),
 - niespójnością rozproszenia (sygnały są odbijane od zbyt wielu struktur, co powoduje anulowanie fazy),
 - absorpcją impulsów radarowych.
+
+Zbiór składa się z 351 przypadków. W zbiorze znaleziono jeden powtarzający się przypadek, co skutkowało jego eliminacją. Ponadto druga kolumna zawiera tylko jedną wartość będącą zerem.
+
+Dane zostały podzielona na dwa zbiory:
+- zbiór danych uczących jako 200 przypadków po 100 dla każdej kategorii,
+- zbiór do testowania sieci liczący 150 przypadków (125 "dobrych" i 25 "złych").
 
 <a name="opis_sieci_neuronowej"></a>
 ## 2. Opis sieci neuronowej
@@ -70,3 +76,4 @@ Po agregacji danych wejściowych z uwzględnieniem wag powstaje sygnał sumarycz
 - Sigillito, V. G., Wing, S. P., Hutton, L. V., \& Baker, K. B. (1989). **Classification of radar returns from the ionosphere using neural  networks**. Johns Hopkins APL Technical Digest, 10, 262-266.
 - J. Żurada, M. Barski, W. Jędruch. **Sztuczne sieci neuronowe**. **Podstawy teorii i zastosowania**. Wydawnictwo Naukowe PWN, 1996, 83-01-12106-8
 - R. Tadeusiewicz, M. Szaleniec. **Leksykon sieci neuronowych**. Wydanie I, Wrocław 2015, 978-83-63270-10-0
+- Sebastian Raschka. **Python Machine Learning**. **Unlock deeper insights into machine learning with this vital guide to cutting-edge predictive analytics**. 978-1-78355-513-0
