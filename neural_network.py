@@ -90,14 +90,14 @@ def forward_propagate(network, row):
 def predict(network, row):
     outputs = forward_propagate(network, row)
 
-    return outputs.index(max(outputs))
+    return outputs.index(max(outputs)), outputs
 
-def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden):
+def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_inc = 1.05, er = 1.04):
     # backpropagation algorithm with stochatic gradient descent
-    predictions = list()
     n_inputs    = len(train[0]) - 1
     n_outputs   = len(set(row[-1] for row in train))
     sse_list    = list()
+    prev_error = 0
     
     # initialize a network
     network = list()
@@ -158,26 +158,33 @@ def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden):
 
         sse_list.append(sum_error)
 
-        print('> ep=%3d, lr=%2.3f, err=%.3f' % (epoch, l_rate, sum_error))
+        if ADAPTIVE_LEARNING_RATE:
+            if (epoch == 1):
+                prev_error = sum_error
 
+            if sum_error > (er * prev_error):
+                l_rate *= lr_dec
+            elif sum_error < prev_error:
+                l_rate *= lr_inc
 
+            prev_error = sum_error
 
-    for row in test:
-        prediction = predict(network, row)
-        predictions.append(prediction)
-
-    actual = [row[-1] for row in test]
+        print('> ep={:3d}, lr={:2.3f}, err={:.3f}'.format(epoch, l_rate, sum_error))
 
     # calculate accuracy percentage
     correct = 0
-    for i in range(len(actual)):
-        if actual[i] == predictions[i]:
+    
+    for i, row in enumerate(test):
+        predicted, outputs = predict(network, row)
+
+        if row[-1] == predicted:
             correct += 1
 
-    return (
-        sse_list,
-        correct / float(len(actual)) * 100.0
-    )
+        if (OUTPUT_ONLY_BAD_PREDICTIONS and (row[-1] != predicted)) or (not OUTPUT_ONLY_BAD_PREDICTIONS):
+            answer = 'good' if predicted == row[-1] else 'bad'
+            print("%4s - [%s]" % (answer, ', '.join('{:.2f}'.format(i) for i in outputs)))
+
+    return sse_list, correct / float(len(test)) * 100.0
 
 
 
@@ -189,19 +196,31 @@ train_set, test_set = prepare_data(
     test_set_name = 'dataset/ionosphere.test_set.data.csv'
 )
 
-l_rate = 0.1  # 0.1
-n_epoch = 400 # 200
-n_hidden = 8  # 14
+l_rate = 0.6 # 0.1
+n_epoch = 50 # 200
+n_hidden = 3 # 14
+
+'''
+print('[')
+for hidden_neurons in [3, 5, 8, 10, 15]:
+    for learning_rate in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]:
+        sse_list, scores = evaluate_algorithm(train_set, test_set, learning_rate, n_epoch, hidden_neurons)
+        print('[%d, %f, %.2f],' % (hidden_neurons, learning_rate, scores))
+print(']')
+
+'''
+
+ADAPTIVE_LEARNING_RATE = False
+OUTPUT_ONLY_BAD_PREDICTIONS = False
 
 sse_list, scores = evaluate_algorithm(train_set, test_set, l_rate, n_epoch, n_hidden)
-
 print('==============================')
-print('CORRECT: %.2f%%' % scores)
+print('CORRECT: {:.2f}%'.format(scores))
 
 plt.plot(range(1, len(sse_list) + 1), sse_list)
-plt.ylim([min(sse_list) - 1, max(sse_list) + 1])
+plt.ylim([0, max(sse_list) + 1])
 plt.ylabel('SSE')
 plt.xlabel('Epoki')
 plt.tight_layout()
-plt.savefig('./figures/cost_%.2f_%d_%d.png' % (l_rate, n_epoch, n_hidden), dpi=300)
+plt.savefig('./figures/cost_{:.2f}_{:d}_{:d}.png'.format(l_rate, n_epoch, n_hidden), dpi=300)
 plt.show()
