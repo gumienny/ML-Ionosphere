@@ -1,9 +1,7 @@
-from math import exp
-from csv import reader
-from random import seed
-from random import random
-from random import randrange
 import matplotlib.pyplot as plt
+from csv import reader
+from math import exp
+import random
 
 # load a CSV file
 def load_csv(filename):
@@ -49,18 +47,6 @@ def prepare_data(train_set_name, test_set_name):
     return (train_set, test_set)
 
 
-# find the min and max values for each column
-def dataset_minmax(dataset):
-    minmax = list()
-    stats = [[min(column), max(column)] for column in zip(*dataset)]
-    return stats
-
-# rescale dataset columns to the range 0-1
-def normalize_dataset(dataset, minmax):
-    for row in dataset:
-        for i in range(len(row) - 1):
-            row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
-
 # forward propagate input to a network output
 def forward_propagate(network, row):
     inputs = row
@@ -92,7 +78,7 @@ def predict(network, row):
 
     return outputs.index(max(outputs)), outputs
 
-def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_inc = 1.05, er = 1.04):
+def train_network(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_inc = 1.05, er = 1.04):
     # backpropagation algorithm with stochatic gradient descent
     n_inputs    = len(train[0]) - 1
     n_outputs   = len(set(row[-1] for row in train))
@@ -101,14 +87,19 @@ def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_
     
     # initialize a network
     network = list()
-    hidden_layer = [ {'weights': [random() for i in range(n_inputs + 1)]} for i in range(n_hidden) ]
-    output_layer = [ {'weights': [random() for i in range(n_hidden + 1)]} for i in range(n_outputs) ]
+
+    hidden_layer = [{'weights': [random.random() for i in range(n_inputs + 1)]} for i in range(n_hidden) ]
+    output_layer = [{'weights': [random.random() for i in range(n_hidden + 1)]} for i in range(n_outputs)]
+
     network.append(hidden_layer)
     network.append(output_layer)
 
     # train a network for a fixed number of epochs
     for epoch in range(1, n_epoch + 1):
         sum_error = 0
+
+        if RANDOMIZE:
+            random.shuffle(train)
 
         for row in train:
             outputs = forward_propagate(network, row)
@@ -138,8 +129,6 @@ def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_
                 for j in range(len(layer)):
                     neuron = layer[j]
                     neuron_output = neuron['output']
-                    # transfer derivative
-                    # sigmoid: output * (1.0 - output)
                     neuron['delta'] = errors[j] * (0.5 * (1 - neuron_output  * neuron_output))
 
             # update weights
@@ -169,7 +158,9 @@ def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_
 
             prev_error = sum_error
 
-        print('> ep={:3d}, lr={:2.3f}, err={:.3f}'.format(epoch, l_rate, sum_error))
+        if VERBOSE:
+            print('> epoch={:3d}, lr={:.3f}, sse={:.3f}'.format(epoch, l_rate, sum_error))
+
 
     # calculate accuracy percentage
     correct = 0
@@ -180,47 +171,52 @@ def evaluate_algorithm(train, test, l_rate, e_epoch, n_hidden, lr_dec = 0.7, lr_
         if row[-1] == predicted:
             correct += 1
 
-        if (OUTPUT_ONLY_BAD_PREDICTIONS and (row[-1] != predicted)) or (not OUTPUT_ONLY_BAD_PREDICTIONS):
-            answer = 'good' if predicted == row[-1] else 'bad'
-            print("%4s - [%s]" % (answer, ', '.join('{:.2f}'.format(i) for i in outputs)))
+        if VERBOSE:
+            if (OUTPUT_ONLY_BAD_PREDICTIONS and (row[-1] != predicted)) or (not OUTPUT_ONLY_BAD_PREDICTIONS):
+                answer = 'good' if predicted == row[-1] else 'bad'
+                print("%4s - [%s]" % (answer, ', '.join('{:.2f}'.format(i) for i in outputs)))
 
     return sse_list, correct / float(len(test)) * 100.0
 
 
+random.seed(7)
 
-
-seed(1)
 
 train_set, test_set = prepare_data(
     train_set_name = 'dataset/ionosphere.training_set.data.csv',
     test_set_name = 'dataset/ionosphere.test_set.data.csv'
 )
 
-l_rate = 0.6 # 0.1
-n_epoch = 50 # 200
-n_hidden = 3 # 14
 
-'''
-print('[')
-for hidden_neurons in [3, 5, 8, 10, 15]:
-    for learning_rate in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]:
-        sse_list, scores = evaluate_algorithm(train_set, test_set, learning_rate, n_epoch, hidden_neurons)
-        print('[%d, %f, %.2f],' % (hidden_neurons, learning_rate, scores))
-print(']')
+l_rate = 0.5 # 0.1
+n_epoch = 100 # 200
+n_hidden = 10 # 14
 
-'''
 
+OUTPUT_ONLY_BAD_PREDICTIONS = True
 ADAPTIVE_LEARNING_RATE = False
-OUTPUT_ONLY_BAD_PREDICTIONS = False
+RANDOMIZE = False
+VERBOSE = True
 
-sse_list, scores = evaluate_algorithm(train_set, test_set, l_rate, n_epoch, n_hidden)
-print('==============================')
-print('CORRECT: {:.2f}%'.format(scores))
 
-plt.plot(range(1, len(sse_list) + 1), sse_list)
-plt.ylim([0, max(sse_list) + 1])
-plt.ylabel('SSE')
-plt.xlabel('Epoki')
-plt.tight_layout()
-plt.savefig('./figures/cost_{:.2f}_{:d}_{:d}.png'.format(l_rate, n_epoch, n_hidden), dpi=300)
-plt.show()
+if False:
+    print('[')
+    for hidden_neurons in [3, 5, 8, 10, 15]:
+        for learning_rate in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]:
+            sse_list, scores = train_network(train_set, test_set, learning_rate, n_epoch, hidden_neurons)
+            print('[%d, %f, %.2f],' % (hidden_neurons, learning_rate, scores))
+    print(']')
+
+
+if True:
+    sse_list, scores = train_network(train_set, test_set, l_rate, n_epoch, n_hidden)
+    print('==============================')
+    print('CORRECT: {:.2f}%'.format(scores))
+
+    plt.plot(range(1, len(sse_list) + 1), sse_list)
+    plt.ylim([min(sse_list) - 1, max(sse_list) + 1])
+    plt.ylabel('SSE')
+    plt.xlabel('Epoki')
+    plt.tight_layout()
+    plt.savefig('./figures/cost_{:.2f}_{:d}_{:d}.png'.format(l_rate, n_epoch, n_hidden), dpi=300)
+    plt.show()
